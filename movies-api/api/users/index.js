@@ -5,11 +5,10 @@ const router = express.Router(); // eslint-disable-line
 
 // Get all users
 router.get('/', (req, res) => {
-    User.find().then(users =>  res.status(200).json(users)).catch(next);
+    User.find().then(users =>  res.status(200).json(users));
 });
 
 // register
-// authenticate a user
 router.post('/', (req, res, next) => {
   if (!req.body.username || !req.body.password) {
       res.status(401).send('authentication failed');
@@ -37,9 +36,8 @@ router.put('/:id',  (req, res) => {
     }, req.body, {
       upsert: false,
     })
-    .then(user => res.json(200, user)).catch(next);
+    .then(user => res.json(200, user));
 });
-
 
 router.post('/:userName/favourites', (req, res, next) => {
     const newFavourite = req.body;
@@ -64,11 +62,5 @@ router.post('/:userName/favourites', (req, res, next) => {
         user => res.status(201).send(user.favourites)
     ).catch(next);
   });
-
-
-
-
-
-
 
 export default router;
