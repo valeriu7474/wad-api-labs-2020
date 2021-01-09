@@ -6,7 +6,7 @@ import './db';
 import {loadUsers} from './seedData'
 import usersRouter from './api/users';
 import session from 'express-session';
-import authenticate from './authenticate';
+import passport from './authenticate';
 
 dotenv.config();
 
@@ -16,7 +16,7 @@ const errHandler = (err, req, res, next) => {
   if(process.env.NODE_ENV === 'production') {
     return res.status(500).send(`Something went wrong!`);
   }
-  res.status(500).send(`Hey!! You caught the error 👍👍, ${err.stack} `);
+  res.status(500).send(`Hey!! You caught the error 👍👍, ${err.stack}`)
 };
 
 const app = express();
@@ -30,16 +30,13 @@ app.use(session({
 }));
 
 app.use(express.static('public'));
-//configure body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded());
-app.use('/api/movies', authenticate, moviesRouter);
+app.use(passport.initialize());
+app.use('/api/movies', passport.authenticate('jwt', {session: false}), moviesRouter);
+// app.use('/api/movies', authenticate, moviesRouter);
 app.use('/api/movies', moviesRouter);
-//Users router
 app.use('/api/users', usersRouter);
-
-
-
 app.use(errHandler);
 
 app.listen(port, () => {
